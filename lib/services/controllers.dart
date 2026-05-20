@@ -188,6 +188,11 @@ class DetailController extends GetxController {
 
     final cartIds = await AuthService.toggleCartId(current.id);
     inCart.value = cartIds.contains(current.id.toString());
+
+    if (Get.isRegistered<CartController>()) {
+      await Get.find<CartController>().loadCartItems();
+    }
+
     Get.snackbar(
       'Cart',
       inCart.value ? 'Product added to cart' : 'Product removed from cart',
