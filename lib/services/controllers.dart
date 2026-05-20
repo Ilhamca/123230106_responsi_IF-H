@@ -204,6 +204,7 @@ class DetailController extends GetxController {
 class CartController extends GetxController {
   RxList<Article> items = <Article>[].obs;
   RxBool isLoading = false.obs;
+  RxBool isCheckingOut = false.obs;
   RxString errorMessage = ''.obs;
 
   @override
@@ -244,6 +245,28 @@ class CartController extends GetxController {
     cartIds.remove(productId.toString());
     await AuthService.setCartIds(cartIds);
     await loadCartItems();
+  }
+
+  Future<void> checkout() async {
+    if (items.isEmpty || isCheckingOut.value) {
+      return;
+    }
+
+    isCheckingOut.value = true;
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+      await AuthService.clearCart();
+      items.clear();
+      Get.snackbar(
+        'Purchase complete',
+        'This is a fake checkout. Your cart has been cleared.',
+        snackPosition: SnackPosition.TOP,
+      );
+    } catch (e) {
+      errorMessage.value = e.toString();
+    } finally {
+      isCheckingOut.value = false;
+    }
   }
 
   double get totalPrice {

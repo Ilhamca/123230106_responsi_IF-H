@@ -29,6 +29,80 @@ class ReportScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: Obx(() {
+        if (controller.items.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return SafeArea(
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(top: BorderSide(color: Colors.grey.shade200)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Total',
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        controller.totalPrice.toStringAsFixed(2),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF1F2937),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Obx(() {
+                    final isProcessing = controller.isCheckingOut.value;
+
+                    return SizedBox(
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: isProcessing ? null : controller.checkout,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2F6FED),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: isProcessing
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : const Text(
+                                'Buy Now',
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              ),
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
